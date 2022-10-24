@@ -48,11 +48,10 @@ for i in model.i:
 
         if (value(model.distance[i, j]) <= 15 and value(model.distance[i,j])>=1) or (value(model.distance[j,i]) <= 15 and value(model.distance[j,i]) >=1):
             model.distance[i,j] = 1
+            model.distance[j,i] = 1
         else:
             model.distance[i,j] = 0
-
-        if value(model.distance[i, j]) != 0:
-            model.distance[j,i] = model.distance[i, j]
+            model.distance[j,i] = 0
 
 model.x = Var(model.i, domain=Binary) # Binary variable to determine if town is chosen or not
 
