@@ -7,7 +7,7 @@
     Juan Sebastián Alegría - 202011282
 """
 
-from pyomo.environ import ConcreteModel, Param, Var, Objective, value, minimize, Binary, Constraint
+from pyomo.environ import *
 from pyomo.opt import SolverFactory
 
 model = ConcreteModel()
