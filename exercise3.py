@@ -1,10 +1,10 @@
 """
-    Laboratorio 4 - MOS
-    Ejercicio 3
+Laboratorio 4 - MOS
+Ejercicio 3
 
-    Realizado por:
-    Juan Andrés Romero C - 202013449
-    Juan Sebastián Alegría - 202011282
+Realizado por:
+Juan Andrés Romero C - 202013449
+Juan Sebastián Alegría - 202011282
 """
 
 from pyomo.environ import *

@@ -1,10 +1,10 @@
 """
-    Laboratorio 4 - MOS
-    Ejercicio 4
+Laboratorio 4 - MOS
+Ejercicio 4
 
-    Realizado por:
-    Juan Andrés Romero C - 202013449
-    Juan Sebastián Alegría - 202011282
+Realizado por:
+Juan Andrés Romero C - 202013449
+Juan Sebastián Alegría - 202011282
 """
 
 from pyomo.environ import *
@@ -77,6 +77,7 @@ model.source_node_restriction = Constraint(model.i, rule=source_node_restriction
 model.destination_node_restriction = Constraint(model.i, rule=destination_node_restriction)
 model.intermediate_node_restriction = Constraint(model.i, rule=intermediate_node_restriction)
 
+# Applying the solver
 SolverFactory('glpk').solve(model)
 model.display()
 

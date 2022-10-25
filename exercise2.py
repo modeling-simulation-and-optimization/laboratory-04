@@ -1,10 +1,10 @@
 """
-    Laboratorio 4 - MOS
-    Ejercicio 2
+Laboratorio 4 - MOS
+Ejercicio 2
 
-    Realizado por:
-    Juan Andrés Romero C - 202013449
-    Juan Sebastián Alegría - 202011282
+Realizado por:
+Juan Andrés Romero C - 202013449
+Juan Sebastián Alegría - 202011282
 """
 
 from pyomo.environ import *
@@ -19,7 +19,7 @@ model.distance = Param(model.i, model.i, mutable=True)
 
 for i in model.i:
     for j in model.i:
-        model.distance[i,j] = 0
+        model.distance[i, j] = 0
 
 model.distance['i1', 'i2'] = 10
 model.distance['i1', 'i3'] = 20
@@ -46,21 +46,25 @@ for i in model.i:
         if value(model.distance[i, j]) != 0:
             model.distance[j, i] = model.distance[i, j]
 
-        if (value(model.distance[i, j]) <= 15 and value(model.distance[i,j])>=1) or (value(model.distance[j,i]) <= 15 and value(model.distance[j,i]) >=1):
-            model.distance[i,j] = 1
-            model.distance[j,i] = 1
+        if (value(model.distance[i, j]) <= 15 and value(model.distance[i, j]) >= 1) or (value(model.distance[j, i]) <= 15 and value(model.distance[j, i]) >= 1):
+            model.distance[i, j] = 1
+            model.distance[j, i] = 1
         else:
-            model.distance[i,j] = 0
-            model.distance[j,i] = 0
+            model.distance[i, j] = 0
+            model.distance[j, i] = 0
 
-model.x = Var(model.i, domain=Binary) # Binary variable to determine if town is chosen or not
+# Binary variable to determine if town is chosen or not
+model.x = Var(model.i, domain=Binary)
 
-model.targetFunc = Objective(expr= sum(model.x[i] for i in model.i), sense=minimize) # Target Function
+model.targetFunc = Objective(expr=sum(model.x[i] for i in model.i), sense=minimize)  # Target Function
+
 
 def min_zones(model, i):
-    return sum(model.x[j]*model.distance[i,j] for j in model.i) >= 1
+    return sum(model.x[j]*model.distance[i, j] for j in model.i) >= 1
 
-model.minZones = Constraint(model.i, rule=min_zones)
 
+model.min_zones = Constraint(model.i, rule=min_zones)
+
+# Applying the solver
 SolverFactory('glpk').solve(model)
 model.display()
