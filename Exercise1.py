@@ -12,6 +12,7 @@ from pyomo.opt import SolverFactory
 
 model = ConcreteModel()
 
+# Sets and parameters
 model.i = {'i1', 'i2', 'i3'}  # Origin CPUs
 model.j = {'j1', 'j2'}  # Destination CPUs
 model.p = {'pk', 'pu'}  # Process types
@@ -45,9 +46,11 @@ model.cost['i3', 'j2'] = 300
 # Amount of processes sent per path and type
 model.x = Var(model.i, model.j, model.p, domain=NonNegativeReals)
 
-model.targetFunc = Objective(expr=sum(model.cost[i, j] * model.x[i, j, p] for i in model.i for j in model.j for p in model.p), sense=minimize)  # Target Function
+# Objective function
+model.targetFunc = Objective(expr=sum(model.cost[i, j] * model.x[i, j, p] for i in model.i for j in model.j for p in model.p), sense=minimize)
 
 
+# Constraints
 def max_processes_sent(model, i, p):
     return sum(model.x[i, j, p] for j in model.j) <= model.oProcess[i, p]
 

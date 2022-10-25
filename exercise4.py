@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 import itertools
 
 model = ConcreteModel()
+
+# Sets and parameters
 model.i = {'i1', 'i2', 'i3', 'i4', 'i5', 'i6', 'i7'}
 
 model.coords = {'coordX', 'coordY'}
@@ -39,7 +41,8 @@ model.graph = Param(model.i, model.i, mutable=True)
 
 for i in model.i:
     for j in model.i:
-        model.distance[i, j] = sqrt((value(model.positions[i, 'coordX'])-value(model.positions[j, 'coordX']))**2 + (value(model.positions[i, 'coordY'])-value(model.positions[j, 'coordY']))**2)
+        model.distance[i, j] = sqrt((value(model.positions[i, 'coordX'])-value(model.positions[j, 'coordX']))
+                                    ** 2 + (value(model.positions[i, 'coordY'])-value(model.positions[j, 'coordY']))**2)
         if value(model.distance[i, j] <= 20) and value(model.distance[i, j] > 0):
             model.graph[i, j] = model.distance[i, j]
         else:
@@ -48,13 +51,15 @@ for i in model.i:
 SOURCE_NODE = 'i4'
 DESTINATION_NODE = 'i6'
 
-# Binary variable to determine if the node is chosen or not
+# Variables
 model.x = Var(model.i, model.i, domain=Binary)
 
-# Target Function
-model.targetFunc = Objective(expr=sum(model.graph[i, j]*model.x[i, j] for i in model.i for j in model.i), sense=minimize)
+# Objective function
+model.targetFunc = Objective(expr=sum(
+    model.graph[i, j]*model.x[i, j] for i in model.i for j in model.i), sense=minimize)
 
 
+# Constraints
 def source_node_restriction(model, i):
     if i == SOURCE_NODE:
         return sum(model.x[i, j] for j in model.i) == 1
@@ -73,9 +78,12 @@ def intermediate_node_restriction(model, i):
     return Constraint.Skip
 
 
-model.source_node_restriction = Constraint(model.i, rule=source_node_restriction)
-model.destination_node_restriction = Constraint(model.i, rule=destination_node_restriction)
-model.intermediate_node_restriction = Constraint(model.i, rule=intermediate_node_restriction)
+model.source_node_restriction = Constraint(
+    model.i, rule=source_node_restriction)
+model.destination_node_restriction = Constraint(
+    model.i, rule=destination_node_restriction)
+model.intermediate_node_restriction = Constraint(
+    model.i, rule=intermediate_node_restriction)
 
 # Applying the solver
 SolverFactory('glpk').solve(model)
@@ -90,10 +98,13 @@ for i, j in itertools.permutations(model.i, 2):
     if value(value(model.graph[i, j]) != 999):
         plt.plot([value(model.positions[i, 'coordX']), value(model.positions[j, 'coordX'])], [value(
             model.positions[i, 'coordY']), value(model.positions[j, 'coordY'])], 'b--', dashes=(4, 8))
-    plt.plot(value(model.positions[i, 'coordX']), value(model.positions[i, 'coordY']), 'ro')
-    plt.text(value(model.positions[i, 'coordX'])+0.5, value(model.positions[i, 'coordY'])+0.5, i, fontsize=10)
+    plt.plot(value(model.positions[i, 'coordX']),
+             value(model.positions[i, 'coordY']), 'ro')
+    plt.text(value(model.positions[i, 'coordX'])+0.5,
+             value(model.positions[i, 'coordY'])+0.5, i, fontsize=10)
 
 for i, j in itertools.permutations(model.i, 2):
     if value(model.x[i, j]) == 1:
-        plt.plot([value(model.positions[i, 'coordX']), value(model.positions[j, 'coordX'])], [value(model.positions[i, 'coordY']), value(model.positions[j, 'coordY'])], 'r-')
+        plt.plot([value(model.positions[i, 'coordX']), value(model.positions[j, 'coordX'])], [
+                 value(model.positions[i, 'coordY']), value(model.positions[j, 'coordY'])], 'r-')
 plt.show()

@@ -11,8 +11,9 @@ from pyomo.environ import *
 from pyomo.opt import SolverFactory
 
 model = ConcreteModel()
-# Town sets
-model.i = {'i1', 'i2', 'i3', 'i4', 'i5', 'i6'}
+
+# Sets and parameters
+model.i = {'i1', 'i2', 'i3', 'i4', 'i5', 'i6'}  # Town sets
 
 # Distance between towns
 model.distance = Param(model.i, model.i, mutable=True)
@@ -53,12 +54,15 @@ for i in model.i:
             model.distance[i, j] = 0
             model.distance[j, i] = 0
 
+# Variables
 # Binary variable to determine if town is chosen or not
 model.x = Var(model.i, domain=Binary)
 
+# Objective function
 model.targetFunc = Objective(expr=sum(model.x[i] for i in model.i), sense=minimize)  # Target Function
 
 
+# Constraints
 def min_zones(model, i):
     return sum(model.x[j]*model.distance[i, j] for j in model.i) >= 1
 
