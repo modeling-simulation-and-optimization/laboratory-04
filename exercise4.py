@@ -10,6 +10,7 @@
 from pyomo.environ import *
 from pyomo.opt import SolverFactory
 from math import sqrt
+import matplotlib.pyplot as plt
 
 model = ConcreteModel()
 model.i = {'i1', 'i2', 'i3', 'i4', 'i5', 'i6', 'i7'}
@@ -73,3 +74,22 @@ model.intermediate_node_restriction = Constraint(model.i, rule=intermediate_node
 
 SolverFactory('glpk').solve(model)
 model.display()
+
+
+# Plot the resutling graph
+plt.figure(figsize=(6,6))
+plt.title('Exercise 4 - MOS')
+plt.style.use('ggplot')
+
+for i in model.i:
+    for j in model.i:
+        if value(value(model.graph[i,j]) != 999):
+            plt.plot([value(model.positions[i, 'coordX']), value(model.positions[j, 'coordX'])], [value(model.positions[i, 'coordY']), value(model.positions[j, 'coordY'])], 'b--', dashes=(4,8))
+        plt.plot(value(model.positions[i, 'coordX']), value(model.positions[i, 'coordY']), 'ro')
+        plt.text(value(model.positions[i, 'coordX'])+0.5, value(model.positions[i, 'coordY'])+0.5, i, fontsize=10)
+
+for i in model.i:
+    for j in model.i:
+        if value(model.x[i,j]) == 1:
+            plt.plot([value(model.positions[i, 'coordX']), value(model.positions[j, 'coordX'])], [value(model.positions[i, 'coordY']), value(model.positions[j, 'coordY'])], 'r-')
+plt.show()
